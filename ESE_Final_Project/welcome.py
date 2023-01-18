@@ -1,3 +1,5 @@
+import speech_recognition as sr
+from gtts import gTTS
 from playsound import playsound
 
 from firebase import firebase
@@ -8,16 +10,20 @@ import pyrebase
 #date module
 import datetime
 
+from welcome import *
+from activitiesAlarmSetup import *
+from lcdScreen import *
+from doActivities import *
 from sleep import *
 
-def speech(text):
-    print(text)
-    language = "en"
-    output = gTTS(text = text, lang=language, slow=False)
-
-    output.save("/home/cjf646/Desktop/ESE_Final_Project/output.mp3")
-    playsound('/home/cjf646/Desktop/ESE_Final_Project/output.mp3')
-
+# def speech(text):
+#     print(text)
+#     language = "en"
+#     output = gTTS(text = text, lang=language, slow=False)
+#
+#     output.save("/home/cjf646/Desktop/ESE_Final_Project/output.mp3")
+#     playsound('/home/cjf646/Desktop/ESE_Final_Project/output.mp3')
+#
 
 def listening():
 
@@ -68,7 +74,7 @@ def gratitudeVoiceDeviceInteraction():
             engine.say("Yes you are very grateful for that. Have a great sleep!")
             engine.runAndWait()
 #             Going to sleep
-            clock()
+#             clock()
 
 
 
@@ -183,3 +189,4 @@ def gratitudeVoiceDeviceInteraction():
 #     data = {'Date': d, 'Time': current_time}
 # #     FBConn = firebase.FirebaseApplication('https://habits-b5b42-default-rtdb.firebaseio.com', None)
 #     db.child("Users").child(name).child(superhero_name).set(data)
+#

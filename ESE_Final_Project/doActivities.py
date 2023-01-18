@@ -1,6 +1,10 @@
-from lcdScreen import *
-from activitiesAlarmSetup import *
 from welcome import *
+from activitiesAlarmSetup import *
+from lcdScreen import *
+from doActivities import *
+from sleep import *
+
+
 
 from time import sleep
 from RPLCD import i2c
@@ -46,9 +50,22 @@ def completeActivities(activities_list, activity_added, next_activity):
     return_data = db.child('Users').get()
     all_data = return_data.val()
     days = []
+    alarm_times = []
     for x, y in all_data.items():
         days.append(x)
-        print(days)
+        print("what isd this", days)
+        alarm_times.append(y)
+        print("hello:", alarm_times)
+
+    alarm_time = alarm_times[-2]
+    print("working?", alarm_time)
+    for x, y in alarm_time.items():
+        if x == 'Alarm Time hour':
+            hour = y
+        if x == 'Alarm time minute':
+            minute = y
+    print(hour)
+    print(minute)
 
 
 #     data = {'Activity 1': activities_list[0]}
@@ -66,12 +83,18 @@ def completeActivities(activities_list, activity_added, next_activity):
         lcd.crlf()
         lcd.write_string(activities_list[2])
         lcd.crlf()
-        data = {'Activity 1': activities_list[0],'Activity 2': activities_list[1], 'Activity 3': activities_list[2]}
+        data = {'Alarm Time hour': hour, 'Alarm time minute': minute, 'Activity 1': activities_list[0],'Activity 2': activities_list[1], 'Activity 3': activities_list[2]}
         db.child("Users").child(days[-2]).set(data)
+#         clockNight(hour, minute)
+
     else:
         lcd.write_string(activities_list[1])
         lcd.crlf()
         data = {'Activity 2': activities_list[1]}
-        db.child("Users").child(days[-2]).set(data)
+        db.child("Users").child(days[-2]).set(data[2])
 
+
+
+
+    clockRunningNow()
 #     gratitudeVoiceDeviceInteraction()

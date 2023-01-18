@@ -3,8 +3,11 @@ from RPLCD import i2c
 
 # Import sleep library
 from time import sleep
+from welcome import *
 from activitiesAlarmSetup import *
+from lcdScreen import *
 from doActivities import *
+from sleep import *
 
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)

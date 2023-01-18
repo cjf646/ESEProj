@@ -1,6 +1,8 @@
 from welcome import *
 from activitiesAlarmSetup import *
 from lcdScreen import *
+from doActivities import *
+from sleep import *
 
 from picamera import PiCamera
 from time import sleep

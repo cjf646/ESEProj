@@ -1,6 +1,8 @@
+from welcome import *
+from activitiesAlarmSetup import *
 from lcdScreen import *
-from sleep import *
 from doActivities import *
+from sleep import *
 
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
@@ -282,3 +284,4 @@ def save_data(ev=None):
 def waitForEvents():
         while True:
             time.sleep(1)
+

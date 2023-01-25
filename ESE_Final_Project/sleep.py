@@ -13,19 +13,19 @@ from sleep import *
 # Import LCD library
 from RPLCD import i2c
 
-# lcdmode = 'i2c'
-# cols = 20
-# rows = 4
-# charmap = 'A00'
-# i2c_expander = 'PCF8574'
-#
-# # Generally 27 is the address;Find yours using: i2cdetect -y 1
-# address = 0x27
-# port = 1 # 0 on an older Raspberry Pi
-#
-# # Initialise the LCD
-# lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap,
-#                   cols=cols, rows=rows)
+lcdmode = 'i2c'
+cols = 20
+rows = 4
+charmap = 'A00'
+i2c_expander = 'PCF8574'
+
+# Generally 27 is the address;Find yours using: i2cdetect -y 1
+address = 0x27
+port = 1 # 0 on an older Raspberry Pi
+
+# Initialise the LCD
+lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap,
+                  cols=cols, rows=rows)
 
 
 def clockRunningNow():
@@ -60,33 +60,68 @@ def clockRunningNow():
         print("hello:", alarm_times)
 
     alarm_time = alarm_times[-2]
-    print("working?", alarm_time)
+
     for x, y in alarm_time.items():
         if x == 'Alarm Time hour':
             hour = y
         if x == 'Alarm time minute':
             minute = y
-        if x == 'Activity 1':
-            activity1 = x
-        if x == 'Activity 2':
-            activity2 = x
-        if x == 'Activity 3':
-            activity3 = x
+
     print(hour)
     print(minute)
-    data = {'Temperature Data': temp_data, 'Alarm Time hour': hour, 'Alarm time minute': minute, 'Activity 1': activity1,'Activity 2': activity2, 'Activity 3': activity3}
-    db.child("Users").child(days[-2]).set(data)
+#     print("working?", alarm_time)
+#     for x, y in alarm_time.items():
+#         if x == 'Alarm Time hour':
+#             hour = y
+#         if x == 'Alarm time minute':
+#             minute = y
+#         if x == 'Activity 1':
+#             activity1 = y
+#         if x == 'Activity 2':
+#             activity2 = y
+#         if x == 'Activity 3':
+#             activity3 = y
+#     print(hour)
+#     print(minute)
+#     data = {'Temperature Data': temp_data, 'Alarm Time hour': hour, 'Alarm time minute': minute, 'Activity 1': activity1,'Activity 2': activity2, 'Activity 3': activity3}
+#     db.child("Users").child(days[-2]).set(data)
+
+
+
+
+
+
+
+
 
 # current time display during user sleeping
 
-#     while(1):
-#         tim = time.localtime()
-#         current_time = time.strftime("%I:%M %p", tim)
-#         lcd.close(clear=True)
-#         lcd.write_string("Current Time")
-#         lcd.crlf()
-#         lcd.write_string(current_time)
-#
+    while(1):
+        tim = time.localtime()
+        current_time = time.strftime("%I:%M %p", tim)
+        lcd.close(clear=True)
+        lcd.write_string("Current Time")
+        lcd.crlf()
+        lcd.write_string(current_time)
+        current_hour = str(time.strftime("%I", tim))
+        current_minute = str(time.strftime("%M", tim))
+        print(current_hour)
+        print(current_minute)
+        #setting hour to contain a zero at the start if needed
+        hour = str(adjustHour(hour))
+        minute = str(minute)
+        print("alarm hour", hour)
+        print("current_hour", current_hour)
+        print("alarm minute", minute)
+        print("current minute", current_minute)
+
+        if (current_hour == hour) and (current_minute == minute):
+            print("WORKING")
+
+        else:
+            print("NOT WORKING. MONITOR YOUR SLEEP NOW. HASSAN THIS IS WHERE YOUR FUNCTION WILL GO")
+
+        time.sleep(30)
 #
 #         firebaseConfig = {
 #   'apiKey': "AIzaSyBPmuCMq_v2euR4n4qW1hBnosQuBTgtW5k",
@@ -119,7 +154,7 @@ def clockRunningNow():
 #         else:
 #             print("NOT WORKING")
 #
-#         time.sleep(60)
+#          time.sleep(60)
 #
 
 
@@ -144,3 +179,41 @@ def clockRunningNow():
 #             print("WORKING")
 #         else:
 #             print("NOT WORKING")
+
+
+
+
+
+
+
+
+def adjustHour(hour):
+    if hour == 1:
+        hour = "{:02d}".format(hour)
+        return hour
+    if hour == 2:
+        hour = "{:02d}".format(hour)
+        return hour
+    if hour == 3:
+        hour = "{:02d}".format(hour)
+        return hour
+    if hour == 4:
+        hour = "{:02d}".format(hour)
+        return hour
+    if hour == 5:
+        hour = "{:02d}".format(hour)
+        return hour
+    if hour == 6:
+        hour = "{:02d}".format(hour)
+        return hour
+    if hour == 7:
+        hour = "{:02d}".format(hour)
+        return hour
+    if hour == 8:
+        hour = "{:02d}".format(hour)
+        return hour
+    if hour == 9:
+        hour = "{:02d}".format(hour)
+
+    else:
+        return hour

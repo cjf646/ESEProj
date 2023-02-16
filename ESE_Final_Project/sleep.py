@@ -10,6 +10,7 @@ from activitiesAlarmSetup import *
 from lcdScreen import *
 from doActivities import *
 from sleep import *
+from morning import *
 # Import LCD library
 from RPLCD import i2c
 
@@ -28,13 +29,42 @@ lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap,
                   cols=cols, rows=rows)
 
 
-def clockRunningNow():
+def clockRunningNow(activities_list):
 
 # Hassan sleep sensor data
 #  temp_data = tempMonitoring()
 # each value is measured every 30 minutes
-    temp_data = [25, 30, 15]
+    from gpiozero import MotionSensor
+    from datetime import datetime
+    import time
+# motion sensor activation
+#     pir = MotionSensor(17)
+    movements = 0
+    avg_temp = 22
+    avg_humidity = 60
+    light_count = 10
+    air_quality = 35
+    feeling = "Happy"
 
+
+#     while True:
+#       pir.wait_for_motion()
+#       if (pir):
+#         motion_count += 1
+#         print(motion_count)
+#       now1 = (datetime.now())
+#       tstamp1 = "{0:%Y}-{0:%m}-{0:%d}_{0:%H}.{0:%M}.{0:%S}".format(now1)
+#       filename = tstamp1 + "motion log.txt"
+#       file = open("motion_log.txt", "a")
+#       file.write("Motion detected " + tstamp1 + "\n")
+#       pir.wait_for_no_motion()
+#       print("STOPPED")
+#       now2 = (datetime.now())
+#       tstamp2 = "{0:%Y}-{0:%m}-{0:%d}_{0:%H}.{0:%M}.{0:%S}".format(now2)
+#       file = open("motion_log.txt", "a")
+#       file.write("Motion stopped " + tstamp2 + "\n")
+#       time.sleep(1)
+#     file.close()
 
     # after alarm goes off, store data
     firebaseConfig = {
@@ -51,6 +81,11 @@ def clockRunningNow():
     db = firebase.database()
     return_data = db.child('Users').get()
     all_data = return_data.val()
+    print(all_data)
+
+
+
+
     days = []
     alarm_times = []
     for x, y in all_data.items():
@@ -66,6 +101,12 @@ def clockRunningNow():
             hour = y
         if x == 'Alarm time minute':
             minute = y
+        if x == 'Activity 1':
+            activity1 = y
+        if x == 'Activity 2':
+            activity2 = y
+        if x == 'Activity 3':
+            activity3 = y
 
     print(hour)
     print(minute)
@@ -97,6 +138,24 @@ def clockRunningNow():
 # current time display during user sleeping
 
     while(1):
+#         motion sensor code
+#         pir.wait_for_motion()
+#         if (pir):
+#             movements += 1
+#             print(movements)
+#         now1 = (datetime.now())
+#         tstamp1 = "{0:%Y}-{0:%m}-{0:%d}_{0:%H}.{0:%M}.{0:%S}".format(now1)
+#         filename = tstamp1 + "motion log.txt"
+#         file = open("motion_log.txt", "a")
+#         file.write("Motion detected " + tstamp1 + "\n")
+#         pir.wait_for_no_motion()
+#         print("STOPPED")
+#         now2 = (datetime.now())
+#         tstamp2 = "{0:%Y}-{0:%m}-{0:%d}_{0:%H}.{0:%M}.{0:%S}".format(now2)
+#         file = open("motion_log.txt", "a")
+#         file.write("Motion stopped " + tstamp2 + "\n")
+#         time.sleep(1)
+
         tim = time.localtime()
         current_time = time.strftime("%I:%M %p", tim)
         lcd.close(clear=True)
@@ -109,7 +168,9 @@ def clockRunningNow():
         print(current_minute)
         #setting hour to contain a zero at the start if needed
         hour = str(adjustHour(hour))
-        minute = str(minute)
+        minute = str(adjustMinute(minute))
+        current_hour = str(current_hour)
+        current_minute = str(current_minute)
         print("alarm hour", hour)
         print("current_hour", current_hour)
         print("alarm minute", minute)
@@ -117,11 +178,32 @@ def clockRunningNow():
 
         if (current_hour == hour) and (current_minute == minute):
             print("WORKING")
+            now = datetime.now()
+            month = now.strftime("%m")
+            day = now.strftime("%d")
+            year = now.strftime("%Y")
+
+            data = {'Day': day, 'Month': month, 'Year': year, 'Current Time': current_time, 'Feeling': feeling, 'Movements': movements, 'Average Temperature': avg_temp, 'Average humidity': avg_humidity, 'Light triggered': light_count, 'Air quality': air_quality, 'Alarm Time hour': hour, 'Alarm time minute': minute, 'Activity 1': activity1,'Activity 2': activity2, 'Activity 3': activity3}
+            db.child("CurtisFicor").child(days[-2]).set(data)
+
+            beginMorningRoutine()
+
+
+
+            break
+
+
+# Activation of Speaker
+
 
         else:
             print("NOT WORKING. MONITOR YOUR SLEEP NOW. HASSAN THIS IS WHERE YOUR FUNCTION WILL GO")
 
-        time.sleep(30)
+        time.sleep(2)
+
+#     file.close()
+
+
 #
 #         firebaseConfig = {
 #   'apiKey': "AIzaSyBPmuCMq_v2euR4n4qW1hBnosQuBTgtW5k",
@@ -217,3 +299,37 @@ def adjustHour(hour):
 
     else:
         return hour
+
+def adjustMinute(minute):
+    if minute == 0:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 1:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 2:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 3:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 4:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 5:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 6:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 7:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 8:
+        minute = "{:02d}".format(minute)
+        return minute
+    if minute == 9:
+        minute = "{:02d}".format(minute)
+
+    else:
+        return minute

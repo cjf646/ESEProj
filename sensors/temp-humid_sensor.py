@@ -17,16 +17,15 @@ while True:
     conv_temp = float(temp) 
     conv_humid = float(humid) 
     file = open("temp-humid_log.txt", "a") 
-    file.write("Temperature={0:0.1f}C Humidity={1:0.1f}%".format(temperature, humidity) + "\n")
+    file.write(temp + " ")
     sum_temp = sum_temp + conv_temp 
     sum_humid = sum_humid + conv_humid
     counter += 1
     average_temp = sum_temp/counter 
     average_humid = sum_humid/counter
-    file.write("Average Temperature={0:0.1f}C Average Humidity={1:0.1f}%".format(average_temp, average_humid) + "\n") 
     print("Average Temperature={0:0.1f}C Average Humidity={1:0.1f}%".format(average temp, average_humid))
     now = (datetime.now())
-    tstamp = "{0:%Y}-{0:%m}-{0:%d}_{0:%H}.{0:%M}.{0:%S}".format(now)
-    file.write(tstamp + "\n" + "\n")
+    tstamp = "{0:%H}{0:%M}{0:%S}".format(now)
+    file.write(tstamp + "\n")
   time.sleep(1);
 file.close()

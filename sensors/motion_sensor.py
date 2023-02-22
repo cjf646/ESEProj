@@ -7,18 +7,18 @@ counter = 0
 plot = "1"
 zero = "0"
 
-while True:
-  pir.wait_for_motion()
-  if (pir):
-    counter += 1
-    print(counter) 
+while True: 
   now = (datetime.now())
   tstamp = "{0:%H}{0:%M}{0:%S}".format(now) 
-  file = open("motion_log.txt", "a")
-  file.write(plot + " " + tstamp + "\n")
-  pir.wait_for_no_motion()
-  print("STOPPED")
-  if (pir):
-    file.write(zero + " " + tstamp + "\n")
-  time.sleep(1) 
+  if pir.motion_detected:
+        counter += 1
+        print("Motion detected")
+        with open("motion_log.txt", "a") as file:
+            file.write(plot + " " + tstamp + "\n")
+            time.sleep(1)
+  else:
+        print("No motion detected")
+        with open("motion_log.txt", "a") as file:
+            file.write(zero + " " + tstamp + "\n")
+            time.sleep(1)
 file.close()

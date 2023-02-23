@@ -81,6 +81,8 @@ def feelingRecognizer():
             camera.capture(name)
             print(name+" saved")
             storage.child(name).put(name)
+            url = storage.child(name).get_url(None)
+            print("Image sent. URL:", url)
             print("Image sent")
             os.remove(name)
             print("File Removed")

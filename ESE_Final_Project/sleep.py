@@ -11,6 +11,11 @@ from lcdScreen import *
 from doActivities import *
 from sleep import *
 from morning import *
+from recognizeFeelings import *
+from parentVerification import *
+from boxStart import *
+from streak import *
+from main import *
 # Import LCD library
 from RPLCD import i2c
 
@@ -28,8 +33,11 @@ port = 1 # 0 on an older Raspberry Pi
 lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap,
                   cols=cols, rows=rows)
 
+import RPi.GPIO as GPIO
 
-def clockRunningNow(activities_list):
+
+
+def clockRunningNow():
 
 # Hassan sleep sensor data
 #  temp_data = tempMonitoring()
@@ -39,14 +47,17 @@ def clockRunningNow(activities_list):
     import time
 # motion sensor activation
 #     pir = MotionSensor(17)
+    
     movements = 0
     avg_temp = 22
     avg_humidity = 60
     light_count = 10
     air_quality = 35
     feeling = "Happy"
-
-
+    limit_switch = 1
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(22, GPIO.IN)
+    
 #     while True:
 #       pir.wait_for_motion()
 #       if (pir):
@@ -82,10 +93,10 @@ def clockRunningNow(activities_list):
     return_data = db.child('Users').get()
     all_data = return_data.val()
     print(all_data)
-
-
-
-
+    
+    
+    
+    
     days = []
     alarm_times = []
     for x, y in all_data.items():
@@ -93,9 +104,9 @@ def clockRunningNow(activities_list):
         print("what isd this", days)
         alarm_times.append(y)
         print("hello:", alarm_times)
-
+        
     alarm_time = alarm_times[-2]
-
+    
     for x, y in alarm_time.items():
         if x == 'Alarm Time hour':
             hour = y
@@ -106,8 +117,8 @@ def clockRunningNow(activities_list):
         if x == 'Activity 2':
             activity2 = y
         if x == 'Activity 3':
-            activity3 = y
-
+            activity3 = y    
+    
     print(hour)
     print(minute)
 #     print("working?", alarm_time)
@@ -138,6 +149,11 @@ def clockRunningNow(activities_list):
 # current time display during user sleeping
 
     while(1):
+#         check to see if box is opened
+        state_ls = GPIO.input(22)
+        if state_ls == GPIO.LOW:
+            limit_switch += 1
+            print(limit_switch)
 #         motion sensor code
 #         pir.wait_for_motion()
 #         if (pir):
@@ -177,34 +193,38 @@ def clockRunningNow(activities_list):
         print("current minute", current_minute)
 
         if (current_hour == hour) and (current_minute == minute):
+#             turning on LED light strips
+            GPIO.setup(24, GPIO.OUT)
+            GPIO.output(24, GPIO.HIGH)
+            
             print("WORKING")
             now = datetime.now()
             month = now.strftime("%m")
             day = now.strftime("%d")
             year = now.strftime("%Y")
-
-            data = {'Day': day, 'Month': month, 'Year': year, 'Current Time': current_time, 'Feeling': feeling, 'Movements': movements, 'Average Temperature': avg_temp, 'Average humidity': avg_humidity, 'Light triggered': light_count, 'Air quality': air_quality, 'Alarm Time hour': hour, 'Alarm time minute': minute, 'Activity 1': activity1,'Activity 2': activity2, 'Activity 3': activity3}
+            
+            data = {'Limit Switch': limit_switch, 'Day': day, 'Month': month, 'Year': year, 'Current Time': current_time, 'Feeling': feeling, 'Movements': movements, 'Average Temperature': avg_temp, 'Average humidity': avg_humidity, 'Light triggered': light_count, 'Air quality': air_quality, 'Alarm Time hour': hour, 'Alarm time minute': minute, 'Activity 1': activity1,'Activity 2': activity2, 'Activity 3': activity3}
             db.child("CurtisFicor").child(days[-2]).set(data)
-
-            beginMorningRoutine()
-
-
-
+            db.child("Users").child(days[-2]).set(data)      
+            beginMorning()
+            
+            
+            
             break
-
-
+            
+            
 # Activation of Speaker
-
+            
 
         else:
             print("NOT WORKING. MONITOR YOUR SLEEP NOW. HASSAN THIS IS WHERE YOUR FUNCTION WILL GO")
 
         time.sleep(2)
-
+      
 #     file.close()
-
-
-#
+    
+    
+#          
 #         firebaseConfig = {
 #   'apiKey': "AIzaSyBPmuCMq_v2euR4n4qW1hBnosQuBTgtW5k",
 #   'authDomain': "habits-b5b42.firebaseapp.com",
@@ -219,14 +239,14 @@ def clockRunningNow(activities_list):
 #         actual_hour = tim.tm_hour
 #         firebase = pyrebase.initialize_app(firebaseConfig)
 #         db = firebase.database()
-#
+#         
 #         Users = db.child("Users").get()
 #         alarm_time = []
 #         for user in Users.each():
 #             alarm = user.val()
 #             print("what is this????", alarm)
 #             alarm_time.append(alarm)
-#
+#         
 #         print(alarm_time[0])
 #         print(alarm_time[1])
 #         print(actual_minute)
@@ -234,29 +254,29 @@ def clockRunningNow(activities_list):
 #         if actual_minute == alarm_time[1] and actual_hour == alarm_time[0]:
 #             print("WORKING")
 #         else:
-#             print("NOT WORKING")
-#
+#             print("NOT WORKING")          
+# 
 #          time.sleep(60)
-#
+# 
 
 
 
 
 
 
-
-
+        
+        
 #         hour = db.child("Users").get("Alarm Time hour")
 #         minute = db.child("Users").get("Alarm time minute")
 #         print(hour.val())
-#         print(minute.val())
-
+#         print(minute.val())        
+        
 #         actual_minute = tim.tm_min
 #         actual_hour = tim.tm_hour
-#
+#         
 #         print(set_minute)
 #         print(set_hour)
-#
+#         
 #         if actual_minute == set_minute and actual_hour == set_hour:
 #             print("WORKING")
 #         else:
@@ -296,10 +316,10 @@ def adjustHour(hour):
         return hour
     if hour == 9:
         hour = "{:02d}".format(hour)
-
+        
     else:
         return hour
-
+    
 def adjustMinute(minute):
     if minute == 0:
         minute = "{:02d}".format(minute)
@@ -330,6 +350,6 @@ def adjustMinute(minute):
         return minute
     if minute == 9:
         minute = "{:02d}".format(minute)
-
+        
     else:
-        return minute
+        return minute        

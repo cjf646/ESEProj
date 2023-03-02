@@ -10,7 +10,7 @@ tstamp = "{0:%Y},{0:%m},{0:%d}".format(now)
 x = data[:, 2]
 y = data[:, 1]
 plt.title('Humidity Graph for ' + tstamp)
-plt.ylabl('Humidity (%)')
+plt.ylabel('Humidity (%)')
 plt.xlabel('Time')
 plt.plot(x, y, 'r--')
 plt.show()

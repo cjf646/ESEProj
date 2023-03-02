@@ -12,7 +12,7 @@ y1 = data[:, 0]
 y2 = data[:, 1]
 y3 = data[:, 2]
 plt.title('Gas Graph for ' + tstamp)
-plt.ylabl('Concentration (ppm)')
+plt.ylabel('Concentration (ppm)')
 plt.xlabel('Time')
 plt.plot(x, y1, 'r--')
 plt.plot(x, y2, 'r--')

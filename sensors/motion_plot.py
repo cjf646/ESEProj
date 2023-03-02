@@ -10,7 +10,7 @@ tstamp = "{0:%Y},{0:%m},{0:%d}".format(now)
 x = data[:, 1]
 y = data[:, 0]
 plt.title('Motion Graph for ' + tstamp)
-plt.ylabl('Movement')
+plt.ylabel('Movement')
 plt.xlabel('Time')
 plt.plot(x, y, 'r--')
 plt.show()

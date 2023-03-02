@@ -22,5 +22,5 @@ plt.plot(x, y1, 'r--')
 plt.plot(x, y2, 'r--')
 plt.plot(x, y3, 'r--')
 plt.xticks(rotation=45, ha='right')
-plt.savefig(tstamp + '_gas.png'
-plt.show()
+plt.gcf().set_size_inches(19.20, 10.80)
+plt.savefig(tstamp + '_gas.png', dpi=100)

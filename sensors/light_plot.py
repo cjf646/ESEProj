@@ -10,7 +10,7 @@ tstamp = "{0:%Y},{0:%m},{0:%d}".format(now)
 x = data[:, 1]
 y = data[:, 0]
 plt.title('Light Graph for ' + tstamp)
-plt.ylabl('Light Threshold')
+plt.ylabel('Light Threshold')
 plt.xlabel('Time')
 plt.plot(x, y, 'r--')
 plt.show()

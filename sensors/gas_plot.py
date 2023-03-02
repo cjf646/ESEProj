@@ -17,5 +17,5 @@ plt.xlabel('Time')
 plt.plot(x, y1, 'r--')
 plt.plot(x, y2, 'r--')
 plt.plot(x, y3, 'r--')
-plt.show()
 plt.savefig(tstamp + '_gas.png'
+plt.show()

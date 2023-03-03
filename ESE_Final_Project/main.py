@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/usr/share/thonny')
 from welcome import *
 from activitiesAlarmSetup import *
 from lcdScreen import *
@@ -51,32 +53,12 @@ GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 if __name__ == '__main__':
-#     engine = pyttsx3.init()
-#     voice = engine.getProperty('voices')
-#     engine.setProperty('voice', voice[32].id)
-#     
-#     engine.say("Hi, I am your superhero coach")
-#     engine.runAndWait()
-#     time.sleep(1)
-#     engine.say("Please say one thing you are grateful for before you go to sleep! ok go")
-#     engine.runAndWait()
-#     setupGPIO()
-#     gratitudeVoiceDeviceInteraction()
-    
-#     checkStreakAndActivityPoints()
-    
-#     setupGPIO()
-#     
-#     beginMorning()
-    
 
-#     
-    
+
     setupGPIO()
+
     boxRun()
-    time.sleep(1)
     lockOn()
-           
     waitForEvents()
 
 

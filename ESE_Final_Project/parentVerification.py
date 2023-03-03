@@ -28,6 +28,9 @@ import pyttsx3
 import time
 import pyrebase
 
+# parent fob code
+from mfrc522 import SimpleMFRC522
+
 # select_button = False
 activity_added = 0
 # constants to initialise the LCD
@@ -49,46 +52,59 @@ lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap,
 
 
 def parentFob():
-    firebaseConfig = {
-      'apiKey': "AIzaSyBPmuCMq_v2euR4n4qW1hBnosQuBTgtW5k",
-      'authDomain': "habits-b5b42.firebaseapp.com",
-      'databaseURL': "https://habits-b5b42-default-rtdb.firebaseio.com",
-      'projectId': "habits-b5b42",
-      'storageBucket': "habits-b5b42.appspot.com",
-      'messagingSenderId': "134941482333",
-      'appId': "1:134941482333:web:b8acc728562e6ad8789cb4",
-      'measurementId': "G-YWS3LCTD6E"
+    firebaseConfig ={
+        'apiKey': "AIzaSyBPmuCMq_v2euR4n4qW1hBnosQuBTgtW5k",
+        'authDomain': "habits-b5b42.firebaseapp.com",
+        'databaseURL': "https://habits-b5b42-default-rtdb.firebaseio.com",
+        'projectId': "habits-b5b42",
+        'storageBucket': "habits-b5b42.appspot.com",
+        'messagingSenderId': "134941482333",
+        'appId': "1:134941482333:web:b8acc728562e6ad8789cb4",
+        'measurementId': "G-YWS3LCTD6E"
     }
     firebase = pyrebase.initialize_app(firebaseConfig)
     db = firebase.database()
     return_data = db.child('Users').get()
     all_data = return_data.val()
-    
-    
-    
-    
+
+
+
+
     days = []
     data = []
     for x, y in all_data.items():
         days.append(x)
-        
+
         data.append(y)
-        
+
     limit = data[-2]
-    
+
     for x, y in limit.items():
         if x == 'Limit Switch':
             limit_switch = y
-        
-    
+
+
     if limit_switch == 1:
         print("BOX WAS NOT OPENED")
-#         wait to recieve parent fob
-#         fobWait()
-#         check streaks and total points
-        time.sleep(5)
-        checkStreakAndActivityPoints()
-        
+    #         wait to recieve parent fob
+    #         fobWait()
+    #         check streaks and total points
+        while True:
+            try:
+                reader = SimpleMFRC522()
+                print("checking")
+
+                id, text = reader.read()
+                print(id)
+                if(id == 704238721961):
+                    print("CORRECT FOB")
+                    checkStreakAndActivityPoints()
+                else:
+                    print("INVALID FOB")
+            finally:
+                GPIO.cleanup()
+
+
     else:
         print("BOX WAS OPENED")
         lcd.close(clear=True)
@@ -98,4 +114,3 @@ def parentFob():
         lcd.crlf()
 
         lcd.write_string('BOX WAS OPENED      DURING NIGHT')
-    

@@ -57,12 +57,12 @@ engine = pyttsx3.init()
 voice = engine.getProperty('voices')
 engine.setProperty('voice', voice[32].id)
 def mood():
-    
-    
+
+
     engine.say("Select one of the mood pushbuttons that indicate how you are feeling right now")
     engine.runAndWait()
     feelingRecognizer()
- 
+
 def button_pressed(channel):
     if channel == 17:
         print("SAD pressed")
@@ -78,12 +78,12 @@ def button_pressed(channel):
 # #     GPIO.setmode(GPIO.BCM)
 #     GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #     GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-# 
+#
 #     sadPress()
 #     readyPress()
-#     
+#
 #     while keep_running:
-#         
+#
 #         time.sleep(1)
 #         feelingRecognizer()
 #     # Clean up GPIO
@@ -105,11 +105,11 @@ def feelingRecognizer():
     _pressed = False
 
     while not (sad_pressed and ready_pressed):
-        if GPIO.input(17) == GPIO.LOW:
-            print("SAD pressed")
-            feeling = "Sad"
-            camera(feeling)
-            sad_pressed = True
+#         if GPIO.input(17) == GPIO.LOW:
+#             print("SAD pressed")
+#             feeling = "Sad"
+#             camera(feeling)
+#             sad_pressed = True
         if GPIO.input(27) == GPIO.LOW:
             print("READY pressed")
             feeling = "Ready"
@@ -120,13 +120,13 @@ def feelingRecognizer():
     # Clean up GPIO
     GPIO.cleanup()
 
-def camera(feeling):    
-    
+def camera(feeling):
+
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     engine.say("Now draw how you are feeling or what is on your mind on body map, then press green button again.")
     engine.runAndWait()
-    
+
     firebaseConfig = {
   'apiKey': "AIzaSyBPmuCMq_v2euR4n4qW1hBnosQuBTgtW5k",
   'authDomain': "habits-b5b42.firebaseapp.com",
@@ -143,7 +143,7 @@ def camera(feeling):
     storage = firebase.storage()
 
     camera = PiCamera()
-    
+
     db = firebase.database()
 
     while True:
@@ -156,7 +156,7 @@ def camera(feeling):
             camera.capture(name)
             print(name+" saved")
             storage.child(name).put(name)
-            storage.child(name).put(name)
+#             storage.child(name).put(name)
             url = storage.child(name).get_url(None)
             print("Image sent")
             print(url)
@@ -164,7 +164,7 @@ def camera(feeling):
             print("File Removed")
             return_data = db.child('Users').get()
             all_data = return_data.val()
-            print("Hello")      
+            print("Hello")
             days = []
             print("Hello")
             for x, y in all_data.items():
@@ -178,15 +178,15 @@ def camera(feeling):
             break
 
       except:
-            camera.close()   
-        
+            camera.close()
+
     parentFob()
-    
-    
+
+
 # def readyPress():
 #     GPIO.remove_event_detect(27)
 #     GPIO.add_event_detect(27, GPIO.FALLING, callback=button_pressed, bouncetime=300)
 # def sadPress():
 #     GPIO.remove_event_detect(17)
 #     GPIO.add_event_detect(17, GPIO.FALLING, callback=button_pressed, bouncetime=300)
-#     
+#

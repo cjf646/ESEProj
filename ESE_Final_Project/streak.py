@@ -38,6 +38,9 @@ import RPi.GPIO as GPIO
 import sys
 import importlib
 completed_tasks = 0
+import subprocess
+
+
 def checkStreakAndActivityPoints():
     global completed_tasks
 
@@ -57,27 +60,31 @@ def checkStreakAndActivityPoints():
     return_data = db.child('Users').get()
     all_data = return_data.val()
     print(all_data)
-    
-    
-    
-    
+
+
+
+
     days = []
     inside_each_day = []
     for x, y in all_data.items():
         days.append(x)
-        
+
         inside_each_day.append(y)
-    
+
+
+
+
+
     previous_day = inside_each_day[-3]
     previous_day_streak = 0
     for x, y in previous_day.items():
         if x == "Streak":
             previous_day_streak = y
-            
-    total_streak = previous_day_streak + completed_tasks            
+
+    total_streak = previous_day_streak + completed_tasks
     print("Current day streak:", total_streak)
-    
-    
+
+
     previous_day = inside_each_day[-2]
     points_earned_today = 0
     for x, y in previous_day.items():
@@ -86,33 +93,81 @@ def checkStreakAndActivityPoints():
         if x == "Activity 1":
             points_earned_today += 1
         if x == "Activity 2":
-            points_earned_today += 1            
+            points_earned_today += 1
         if x == "Activity 3":
             points_earned_today += 1
         if x == "Feeling":
-            points_earned_today += 1          
+            points_earned_today += 1
         if x == "Drawing Link":
             points_earned_today += 1
-            
-         
+        if x == "Average Temperature":
+            Average_Temperature = y
+        if x == "Average humidity":
+            Average_Humidity = y
+        if x == "Light triggered":
+            Light_Triggered = y
+        if x == "Movements":
+            Motion_Sensor_Triggered = y
+        if x == "LPG Concentration":
+            LPG_Concentration = y
+        if x == "CO2 Concentration":
+            CO2_Concentration = y
+        if x == "Smoke Concentration":
+            Smoke_Concentration = y
+
+
+
+
     print("points from today", points_earned_today)
     previous_day = inside_each_day[-3]
-    previous_day_points = 0
+    total_points = 0
     for x, y in previous_day.items():
         if x == "Total Points":
             total_points = y
-            
-    alltime_total_points = previous_day_points + points_earned_today            
+
+    alltime_total_points = total_points + points_earned_today
     print("All-Time Point Total: ",alltime_total_points)
-    
-    lcd.close(clear=True)
-    lcd.write_string('')
-    lcd.crlf()
-    lcd.write_string('')
-    lcd.crlf()
-    lcd.write_string("Current streak:" + str(total_streak))
-    lcd.crlf()
-    lcd.write_string("Point Total:" + str(alltime_total_points))
-    lcd.crlf()
-    main()
-#     importlib.reload(sys.modules['__main__'])
+
+    points_data = {'Streak': total_streak, 'Total Points': alltime_total_points}
+    db.child("Users").child(days[-2]).update(points_data)
+
+    lcd.clear()
+    #     lcd.close(clear=True)
+#     lcd.write_string('')
+#     lcd.crlf()
+#
+#     lcd.write_string("Current streak:" + str(total_streak))
+#     lcd.crlf()
+#     lcd.write_string("Point Total:" + str(alltime_total_points))
+#     lcd.crlf()
+    # Define the message to display
+    message = '| Current streak: {} | Point Total: {} | LPG Concentration: {} | CO2 Concentration: {} | Smoke Concentration: {} | Average Temperature: {} | Average Humidity: {} | Light: {} | Motion: {} |'.format(total_streak, alltime_total_points, LPG_Concentration, CO2_Concentration, Smoke_Concentration, Average_Temperature, Average_Humidity, Light_Triggered, Motion_Sensor_Triggered)
+
+    start_time = time.time()
+    # Scroll the message to the left every second
+    while True:
+        for i in range(len(message) - cols + 1):
+            lcd.write_string(message[i:i+cols])
+            time.sleep(0.3)
+            lcd.clear()
+            if time.time() > start_time + 20:
+                break
+        if time.time() > start_time + 20:
+            break
+
+    lcd.clear()
+    GPIO.cleanup()
+#     lcd.close(clear=True)
+#     lcd.write_string('CO2 Concentration' + str(air_quality_co2))
+#     lcd.crlf()
+#     lcd.write_string('Light: ' + str(light))
+#     lcd.crlf()
+#
+#     lcd.write_string("Current streak:" + str(total_streak))
+#     lcd.crlf()
+#     lcd.write_string("Point Total:" + str(alltime_total_points))
+#     lcd.crlf()
+#
+#     time.sleep(5)
+    subprocess.call(['/home/cjf646/run_again.sh'])
+    # Stop the program

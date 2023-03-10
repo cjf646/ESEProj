@@ -92,10 +92,24 @@ for x, y in user_data.items():
 
 
 def beginMorning():
+    GPIO.setup(27, GPIO.OUT)
+    GPIO.output(27, GPIO.HIGH)
+    lcd.close(clear=True)
+    lcd.write_string('GOOD MORNING')
+    lcd.crlf()
+    lcd.write_string('PRESS GREEN BUTTON')
+    lcd.crlf()
+    lcd.write_string('TO START ACTIVITIES')
+    lcd.crlf()
+    
+
+    
+    
+    
     engine = pyttsx3.init()
     voice = engine.getProperty('voices')
     engine.setProperty('voice', voice[32].id)
-    engine.say("Time to complete your activities! Press green button to start")
+    engine.say("Good morning. I hope you had a great sleep. Time to complete your activities! Press green button to start")
     engine.runAndWait()
     
     beginMorningRoutine()
@@ -130,7 +144,7 @@ def beginMorningRoutine():
 # #     GPIO.add_event_detect(6, GPIO.FALLING, callback=switch3, bouncetime=1500)
         
 def addActivity():   
-    global activity1, activity2, activity3
+    
     
 #     detectActivitySelect()
 #     detectDone()
@@ -258,14 +272,6 @@ def detectDone():
     GPIO.remove_event_detect(13)
     GPIO.add_event_detect(13, GPIO.FALLING, callback=donePresses, bouncetime=1500)
     
-def waitForEvents():
-        while True:
-            sleep(1)
-
-
-
-
-
 def waitForEvents():
         while True:
             sleep(1)

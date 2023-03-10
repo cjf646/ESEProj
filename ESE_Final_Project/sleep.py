@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from gpiozero import MotionSensor
+from gpiozero import MotionSensor 
 from datetime import datetime
 from firebase import firebase
 import pyttsx3
@@ -52,12 +52,12 @@ def clockRunningNow():
     from gpiozero import MotionSensor
     from datetime import datetime
     import time
-
-
+    
+    
     limit_switch = 1
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(22, GPIO.IN)
-
+    
 #   gas sensor variables
     i2c = busio.I2C(board.SCL, board.SDA)
     ads = ADS.ADS1015(i2c)
@@ -69,17 +69,17 @@ def clockRunningNow():
     ZERO_LPG = 500
     ZERO_CO2 = 500
     ZERO_SMOKE = 500
-
+    
 #   light variables
     readPIN = 14
     light_counter = 0
     value = 0
     conv = 0
-    GPIO.setmode (GPIO.BCM)
+    GPIO.setmode (GPIO.BCM) 
     GPIO.setup(readPIN, GPIO.IN)
-
-#    motion variables
-    pir = MotionSensor(17)
+    
+#	motion variables
+    pir = MotionSensor(17) 
     motion_counter = 0
     plot = "1"
     zero = "0"
@@ -89,7 +89,7 @@ def clockRunningNow():
     th_counter = 0
     sum_temp = 0.0
     sum_humid = 0.0
-
+    
 
     # after alarm goes off, store data
     firebaseConfig = {
@@ -107,18 +107,18 @@ def clockRunningNow():
     return_data = db.child('Users').get()
     all_data = return_data.val()
     print(all_data)
-
-
-
-
+    
+    
+    
+    
     days = []
     alarm_times = []
     for x, y in all_data.items():
         days.append(x)
         alarm_times.append(y)
-
+        
     alarm_time = alarm_times[-2]
-
+    
     for x, y in alarm_time.items():
         if x == 'Alarm Time hour':
             hour = y
@@ -129,10 +129,17 @@ def clockRunningNow():
         if x == 'Activity 2':
             activity2 = y
         if x == 'Activity 3':
-            activity3 = y
-
+            activity3 = y    
+    
 # current time display during user sleeping
     while(1):
+#         DISPLAY CURRENT TIME
+        tim = time.localtime()
+        current_time = time.strftime("%I:%M %p", tim)
+        lcd.close(clear=True)
+        lcd.write_string("Current Time")
+        lcd.crlf()
+        lcd.write_string(current_time)
         #gas_code
         lpg = channels[0].value
         co2 = channels[1].value
@@ -141,17 +148,17 @@ def clockRunningNow():
         lpg_conc = (lpg - ZERO_LPG) / 10.0
         co2_conc = (co2 - ZERO_CO2) / 10.0
         smoke_conc = (smoke - ZERO_SMOKE) / 10.0
-
+                
         gas_counter += 1
 
         lpg_sum = lpg_sum + lpg_conc
         co2_sum = co2_sum + co2_conc
         smoke_sum = smoke_sum + smoke_conc
 
-        average_lpg = lpg_sum/gas_counter
-        average_co2 = co2_sum/gas_counter
-        average_smoke = smoke_sum/gas_counter
-
+        average_lpg = int(lpg_sum/gas_counter)        
+        average_co2 = int(co2_sum/gas_counter)          
+        average_smoke = int(smoke_sum/gas_counter) 
+                
         lpg_conv = str(lpg_conc)
         co2_conv = str(co2_conc)
         smoke_conv = str(smoke_conc)
@@ -160,10 +167,10 @@ def clockRunningNow():
         tstamp = "{0:%H}{0:%M}{0:%S}".format(now)
 
         file = open("gas_log.txt", "a")
-        file.write(lpg_conv + " ")
-        file.write(co2_conv + " ")
-        file.write(smoke_conv + " ")
-        file.write(tstamp + "\n")
+        file.write(lpg_conv + " ") 
+        file.write(co2_conv + " ") 
+        file.write(smoke_conv + " ")    
+        file.write(tstamp + "\n")         
 
         print('LPG Concentration: {:.2f} ppm'.format(lpg_conc))
         print('CO2 Concentration: {:.2f} ppm'.format(co2_conc))
@@ -174,11 +181,11 @@ def clockRunningNow():
         print('\n')
         time.sleep(2)
         file.close()
-
+        
         #Light code
         value = str(GPIO.input(readPIN))
         conv = int(value)
-        if(conv == 1):
+        if(conv == 1): 
           light_counter += 1
           print(light_counter)
           log_value = '1'
@@ -188,8 +195,8 @@ def clockRunningNow():
         file.write(log_value + " " + tstamp + "\n")
         time.sleep(2)
         file.close()
-
-        #motion code
+        
+        #motion code 
         if pir.motion_detected:
             motion_counter += 1
             print("YES")
@@ -202,23 +209,23 @@ def clockRunningNow():
                 file.write(zero + " " + tstamp + "\n")
                 time.sleep(2)
         file.close()
-
+        
 #       temp/humid code
         try:
             temperature_c = dhtDevice.temperature
             humidity = dhtDevice.humidity
             print("Temp: {:.1f} C    Humidity: {}% ".format(temperature_c, humidity))
-            temp = str(temperature_c)
+            temp = str(temperature_c) 
             humid = str(humidity)
-            conv_temp = float(temp)
-            conv_humid = float(humid)
-            file = open("temp-humid_log.txt", "a")
+            conv_temp = float(temp) 
+            conv_humid = float(humid) 
+            file = open("temp-humid_log.txt", "a") 
             file.write(temp + " ")
             file.write(humid + " ")
-            sum_temp = sum_temp + conv_temp
+            sum_temp = sum_temp + conv_temp 
             sum_humid = sum_humid + conv_humid
             th_counter += 1
-            average_temp = sum_temp/th_counter
+            average_temp = sum_temp/th_counter 
             average_humid = sum_humid/th_counter
             print("Average Temperature={0:0.1f}C Average Humidity={1:0.1f}%".format(average_temp, average_humid))
             now = (datetime.now())
@@ -234,7 +241,7 @@ def clockRunningNow():
             raise error
         file.close()
         time.sleep(2)
-
+        
 #         check to see if box is opened
         state_ls = GPIO.input(22)
         if state_ls == GPIO.LOW:
@@ -242,12 +249,12 @@ def clockRunningNow():
             print(limit_switch)
 
 
-        tim = time.localtime()
-        current_time = time.strftime("%I:%M %p", tim)
-        lcd.close(clear=True)
-        lcd.write_string("Current Time")
-        lcd.crlf()
-        lcd.write_string(current_time)
+#         tim = time.localtime()
+#         current_time = time.strftime("%I:%M %p", tim)
+#         lcd.close(clear=True)
+#         lcd.write_string("Current Time")
+#         lcd.crlf()
+#         lcd.write_string(current_time)
         current_hour = str(time.strftime("%I", tim))
         current_minute = str(time.strftime("%M", tim))
         print(current_hour)
@@ -267,13 +274,13 @@ def clockRunningNow():
             firebase = pyrebase.initialize_app(firebaseConfig)
             GPIO.setup(24, GPIO.OUT)
             GPIO.output(24, GPIO.HIGH)
-
+            
             print("WORKING")
             now = datetime.now()
             month = now.strftime("%m")
             day = now.strftime("%d")
             year = now.strftime("%Y")
-
+            
 #           gas graph
             data = np.loadtxt('gas_log.txt')
             now = (datetime.now())
@@ -297,7 +304,7 @@ def clockRunningNow():
             plt.gcf().set_size_inches(19.20, 10.80)
             plt.savefig(tstamp + '_gas.png', dpi=100)
             gas_name = tstamp + '_gas.png'
-            storage.child(gas_name).put(gas_name)
+            storage.child(gas_name).put(gas_name)           
             gas_url = storage.child(gas_name).get_url(None)
             print("Image sent")
             print(gas_url)
@@ -321,7 +328,7 @@ def clockRunningNow():
             plt.gcf().set_size_inches(19.20, 10.80)
             plt.savefig(tstamp + '_temp.png', dpi=100)
             temp_name = tstamp + '_temp.png'
-            storage.child(temp_name).put(temp_name)
+            storage.child(temp_name).put(temp_name)           
             temp_url = storage.child(temp_name).get_url(None)
             print("Image sent")
             print(temp_url)
@@ -345,12 +352,12 @@ def clockRunningNow():
             plt.gcf().set_size_inches(19.20, 10.80)
             plt.savefig(tstamp + '_humid.png', dpi=100)
             humid_name = tstamp + '_humid.png'
-            storage.child(humid_name).put(humid_name)
+            storage.child(humid_name).put(humid_name)           
             humid_url = storage.child(humid_name).get_url(None)
             print("Image sent")
             print(humid_url)
             plt.clf()
-#            light graph
+#			light graph
             data = np.loadtxt('light_log.txt')
             now = (datetime.now())
             tstamp = "{0:%Y},{0:%m},{0:%d}".format(now)
@@ -369,12 +376,12 @@ def clockRunningNow():
             plt.gcf().set_size_inches(19.20, 10.80)
             plt.savefig(tstamp + '_light.png', dpi=100)
             light_name = tstamp + '_light.png'
-            storage.child(light_name).put(light_name)
+            storage.child(light_name).put(light_name)           
             light_url = storage.child(light_name).get_url(None)
             print("Image sent")
             print(light_url)
             plt.clf()
-#            motion graph
+#			motion graph
             g = []
             for timestamp in data[:, 1]:
                 time_str = str(int(timestamp))
@@ -389,7 +396,7 @@ def clockRunningNow():
             plt.gcf().set_size_inches(19.20, 10.80)
             plt.savefig(tstamp + '_motion.png', dpi=100)
             motion_name = tstamp + '_motion.png'
-            storage.child(motion_name).put(motion_name)
+            storage.child(motion_name).put(motion_name)           
             motion_url = storage.child(motion_name).get_url(None)
             print("Image sent")
             print(motion_url)
@@ -397,25 +404,26 @@ def clockRunningNow():
             data = {'Gas graph': gas_url, 'Temperature graph': temp_url,'Humidity graph': humid_url, 'Light graph': light_url, 'Motion graph': motion_url, 'Limit Switch': limit_switch, 'Day': day, 'Month': month, 'Year': year, 'Current Time': current_time,'Movements': motion_counter, 'Average Temperature': average_temp, 'Average humidity': average_humid, 'Light triggered': light_counter, 'LPG Concentration': average_lpg, 'CO2 Concentration': average_co2, 'Smoke Concentration': average_smoke, 'Alarm Time hour': hour, 'Alarm time minute': minute, 'Activity 1': activity1,'Activity 2': activity2, 'Activity 3': activity3}
             db.child("CurtisFicor").child(days[-2]).set(data)
             db.child("Users").child(days[-2]).set(data)
+            time.sleep(5)
             beginMorning()
-
-
-
+            
+            
+            
             break
-
-
+            
+            
 # Activation of Speaker
-
+            
 
         else:
             print("NOT WORKING. MONITOR YOUR SLEEP NOW. HASSAN THIS IS WHERE YOUR FUNCTION WILL GO")
 
         time.sleep(2)
-
+      
     file.close()
-
-
-#
+    
+    
+#          
 #         firebaseConfig = {
 #   'apiKey': "AIzaSyBPmuCMq_v2euR4n4qW1hBnosQuBTgtW5k",
 #   'authDomain': "habits-b5b42.firebaseapp.com",
@@ -430,14 +438,14 @@ def clockRunningNow():
 #         actual_hour = tim.tm_hour
 #         firebase = pyrebase.initialize_app(firebaseConfig)
 #         db = firebase.database()
-#
+#         
 #         Users = db.child("Users").get()
 #         alarm_time = []
 #         for user in Users.each():
 #             alarm = user.val()
 #             print("what is this????", alarm)
 #             alarm_time.append(alarm)
-#
+#         
 #         print(alarm_time[0])
 #         print(alarm_time[1])
 #         print(actual_minute)
@@ -445,29 +453,29 @@ def clockRunningNow():
 #         if actual_minute == alarm_time[1] and actual_hour == alarm_time[0]:
 #             print("WORKING")
 #         else:
-#             print("NOT WORKING")
-#
+#             print("NOT WORKING")          
+# 
 #          time.sleep(60)
-#
+# 
 
 
 
 
 
 
-
-
+        
+        
 #         hour = db.child("Users").get("Alarm Time hour")
 #         minute = db.child("Users").get("Alarm time minute")
 #         print(hour.val())
-#         print(minute.val())
-
+#         print(minute.val())        
+        
 #         actual_minute = tim.tm_min
 #         actual_hour = tim.tm_hour
-#
+#         
 #         print(set_minute)
 #         print(set_hour)
-#
+#         
 #         if actual_minute == set_minute and actual_hour == set_hour:
 #             print("WORKING")
 #         else:
@@ -510,7 +518,7 @@ def adjustHour(hour):
         return hour
     else:
         return hour
-
+    
 def adjustMinute(minute):
     if minute == 0:
         minute = "{:02d}".format(minute)
@@ -543,4 +551,5 @@ def adjustMinute(minute):
         minute = "{:02d}".format(minute)
         return minute
     else:
-        return minute
+        return minute        
+

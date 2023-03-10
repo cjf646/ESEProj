@@ -78,7 +78,7 @@ def completeActivities(activities_list, activity_added, next_activity):
     for x, y in all_data.items():
         days.append(x)
         alarm_times.append(y)
-
+        
     alarm_time = alarm_times[-2]
     for x, y in alarm_time.items():
         if x == 'Alarm Time hour':
@@ -92,7 +92,7 @@ def completeActivities(activities_list, activity_added, next_activity):
     lcd.write_string(activities_list[0])
     lcd.crlf()
     GPIO.output(12, GPIO.HIGH)
-
+    
     if activity_added == 3:
         lcd.write_string(activities_list[1])
         lcd.crlf()
@@ -101,38 +101,45 @@ def completeActivities(activities_list, activity_added, next_activity):
         data = {'Alarm Time hour': hour, 'Alarm time minute': minute, 'Activity 1': activities_list[0],'Activity 2': activities_list[1], 'Activity 3': activities_list[2]}
         db.child("Users").child(days[-2]).set(data)
 #         clockNight(hour, minute)
-
+        
     else:
         lcd.write_string(activities_list[1])
         lcd.crlf()
         data = {'Activity 2': activities_list[1]}
         db.child("Users").child(days[-2]).set(data[2])
-
-
+    
+        
     engine = pyttsx3.init()
     voice = engine.getProperty('voices')
     engine.setProperty('voice', voice[10].id)
-
+    
     engine.say("Hi, I am your superhero coach")
     engine.runAndWait()
     time.sleep(1)
     engine.say("Please say one thing you are grateful for before you go to sleep! ok go")
     engine.runAndWait()
+    lcd.close(clear=True)
+    lcd.write_string('PLEASE SAY ONE THING')
+    lcd.crlf()
+    lcd.write_string('YOU ARE GRATEFUL FOR')
+    lcd.crlf()
+    lcd.write_string('WHEN LIGHT TURNS ON')
+    lcd.crlf()
 
     gratitudeVoiceDeviceInteraction()
-
-
-def listening():
+    
+        
+def listening():    
     listening = True
-
+    
     while listening:
     #keyword = "activate"
         with sr.Microphone() as source:
             recognizer = sr.Recognizer()
             recognizer.adjust_for_ambient_noise(source)
             recognizer.dynamic_energy_threshold = 2500
-
-
+            
+            
             try:
                 print("Listening...")
                 GPIO.output(26, GPIO.HIGH)
@@ -151,25 +158,29 @@ def listening():
 def gratitudeVoiceDeviceInteraction():
     engine = pyttsx3.init()
     voice = engine.getProperty('voices')
-    engine.setProperty('rate', 150)
-    engine.setProperty('voice', voice[10].id)
-    engine.say("Hi, I am your superhero coach")
-    engine.runAndWait()
+#     engine.setProperty('rate', 150)
+#     engine.setProperty('voice', voice[10].id)
+#     engine.say("Hi, I am your superhero coach")
+#     engine.runAndWait()
     gratitude_text = listening()
     substring = "I am grateful"
     if substring in gratitude_text:
-
-        engine.say("Did you say:" + gratitude_text)
-        engine.runAndWait()
-        yes_or_no = listening()
-        yes = "yes"
-        if yes in yes_or_no:
-            engine.say("Yes you are very grateful for that. Have a great sleep!")
-            engine.runAndWait()
-
-            clockRunningNow()
+         engine.say("Sounded like you said" + gratitude_text)
+         engine.runAndWait()
+         engine.say("Yes you are very grateful for that. Have a great sleep!")
+         engine.runAndWait()
+         clockRunningNow()
+#         engine.say("Did you say" + gratitude_text)
+#         engine.runAndWait()
+#         yes_or_no = listening()
+#         yes = "yes"
+#         if yes in yes_or_no:
+#             engine.say("Yes you are very grateful for that. Have a great sleep!")
+#             engine.runAndWait()
+#     
+#             clockRunningNow()
     else:
         engine.say("That is not what you are supposed to say. Try again")
         engine.runAndWait()
         gratitudeVoiceDeviceInteraction()
-    time.sleep(1)
+    time.sleep(1)   
